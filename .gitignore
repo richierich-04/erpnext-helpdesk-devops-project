@@ -1,0 +1,13 @@
+*.pem
+*.key
+*.env
+local.env
+.env
+*.sql
+*.sql.gz
+*.tgz
+*.tar
+*.zip
+site_config*.json
+*backup*
+.DS_Store
