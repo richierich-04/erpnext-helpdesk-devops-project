@@ -1,0 +1,35 @@
+name: Deploy ERPNext Helpdesk Staging
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Personal AWS EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Copy deployment files to EC2
+        run: |
+          ssh -i ~/.ssh/ec2_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "mkdir -p /home/ubuntu/devops-project/deploy"
+          scp -i ~/.ssh/ec2_key deploy/deploy.sh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/devops-project/deploy/deploy.sh
+
+      - name: Run deployment script
+        run: |
+          ssh -i ~/.ssh/ec2_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "
+            chmod +x /home/ubuntu/devops-project/deploy/deploy.sh &&
+            /home/ubuntu/devops-project/deploy/deploy.sh
+          "
