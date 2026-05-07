@@ -42,7 +42,7 @@ STATUS_WEIGHTS = [40, 25, 20, 15]
 PRIORITIES = ["Low", "Medium", "High", "Urgent"]
 PRIORITY_WEIGHTS = [20, 50, 20, 10]
 OWNERS = ["support@mygate.com", "helpdesk@mygate.com", "it@mygate.com"]
-TICKET_TYPES = ["Question", "Bug", "Feature", "Incident", None]
+TICKET_TYPES = ["Question", "Bug", "Feature", "Incident"]
 
 STATUS_CATEGORY_MAP = {
     "Open": "Open",
@@ -54,16 +54,15 @@ STATUS_CATEGORY_MAP = {
 
 def run_sql(sql):
     cmd = [
-        "docker", "exec", CONTAINER,
+        "docker", "exec", "-i", CONTAINER,
         "mariadb",
-        f"-u{DB_USER}",
-        f"-p{DB_PASS}",
+        "-u" + DB_USER,
+        "-p" + DB_PASS,
         DB_NAME,
-        "-e", sql
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, input=sql, capture_output=True, text=True)
     if result.returncode != 0:
-        print(f"SQL Error: {result.stderr.strip()}")
+        print("  SQL Error: " + result.stderr.strip())
     return result.stdout.strip()
 
 
@@ -83,7 +82,7 @@ def insert_new_tickets(count=2):
 
     for i in range(1, count + 1):
         ticket_id = max_id + i
-        subject = random.choice(SUBJECTS)
+        subject = random.choice(SUBJECTS).replace("'", "''")
         status = random.choices(STATUSES, weights=STATUS_WEIGHTS)[0]
         priority = random.choices(PRIORITIES, weights=PRIORITY_WEIGHTS)[0]
         status_category = STATUS_CATEGORY_MAP[status]
@@ -93,25 +92,23 @@ def insert_new_tickets(count=2):
         created_offset = random.randint(0, 30)
         creation = (now - timedelta(minutes=created_offset)).strftime("%Y-%m-%d %H:%M:%S")
         modified = now.strftime("%Y-%m-%d %H:%M:%S")
-        ticket_type_val = f"'{ticket_type}'" if ticket_type else "NULL"
 
-        sql = f"""
-        INSERT INTO \`tabHD Ticket\`
-          (name, creation, modified, modified_by, owner, docstatus, idx,
-           subject, raised_by, status, priority, status_category, ticket_type)
-        VALUES
-          ({ticket_id}, '{creation}', '{modified}', '{owner}', '{owner}',
-           0, 0, '{subject}', '{raised_by}', '{status}', '{priority}',
-           '{status_category}', {ticket_type_val});
-        """
+        sql = (
+            "INSERT INTO `tabHD Ticket` "
+            "(name, creation, modified, modified_by, owner, docstatus, idx, "
+            "subject, raised_by, status, priority, status_category, ticket_type) "
+            "VALUES (" + str(ticket_id) + ", '" + creation + "', '" + modified + "', '"
+            + owner + "', '" + owner + "', 0, 0, '" + subject + "', '" + raised_by
+            + "', '" + status + "', '" + priority + "', '" + status_category
+            + "', '" + ticket_type + "');"
+        )
         run_sql(sql)
-        print(f"  ✓ Inserted ticket #{ticket_id}: [{priority}] {status} - {subject}")
+        print("  + Inserted ticket #" + str(ticket_id) + ": [" + priority + "] " + status + " - " + subject)
 
 
 def update_existing_tickets(count=3):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Pick random open tickets and progress them
     out = run_sql(
         "SELECT name FROM `tabHD Ticket` WHERE status IN ('Open','Replied') "
         "ORDER BY RAND() LIMIT 20;"
@@ -133,18 +130,17 @@ def update_existing_tickets(count=3):
 
         resolution_fields = ""
         if new_status in ("Resolved", "Closed"):
-            resolution_fields = f", resolution_date='{now}', resolution_time=3600"
+            resolution_fields = ", resolution_date='" + now + "', resolution_time=3600"
 
-        sql = f"""
-        UPDATE \`tabHD Ticket\`
-        SET status='{new_status}',
-            status_category='{status_category}',
-            modified='{now}'
-            {resolution_fields}
-        WHERE name={ticket_id};
-        """
+        sql = (
+            "UPDATE `tabHD Ticket` SET status='" + new_status
+            + "', status_category='" + status_category
+            + "', modified='" + now + "'"
+            + resolution_fields
+            + " WHERE name=" + str(ticket_id) + ";"
+        )
         run_sql(sql)
-        print(f"  ✓ Updated ticket #{ticket_id} → {new_status}")
+        print("  ~ Updated ticket #" + str(ticket_id) + " -> " + new_status)
 
 
 def print_summary():
@@ -154,13 +150,13 @@ def print_summary():
     )
     print("\n  Current ticket summary:")
     for line in out.strip().split("\n")[1:]:
-        print(f"    {line}")
+        print("    " + line)
 
 
 if __name__ == "__main__":
-    print(f"\n{'='*45}")
-    print(f"  HD Ticket Seeder - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"{'='*45}")
+    print("\n" + "="*45)
+    print("  HD Ticket Seeder - " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print("="*45)
 
     print("\n[1/2] Inserting new tickets...")
     insert_new_tickets(count=random.randint(1, 3))
