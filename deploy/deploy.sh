@@ -58,6 +58,12 @@ if [ "$FAIL" -gt 0 ]; then
   exit 1
 fi
 
+echo "[5/4] Importing Grafana dashboard..."
+curl -sf -u admin:admin123 -X POST \
+  -H "Content-Type: application/json" \
+  -d @/home/ubuntu/grafana-dashboard-helpdesk.json \
+  http://localhost:3000/api/dashboards/db > /dev/null && echo "  ✓ Dashboard imported" || echo "  ✗ Dashboard import failed"
+
 echo "========================================"
 echo "  Deployment successful ✓"
 echo "========================================"
