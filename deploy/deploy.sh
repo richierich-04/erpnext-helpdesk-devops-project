@@ -59,7 +59,7 @@ if [ "$FAIL" -gt 0 ]; then
 fi
 
 echo "[5/5] Importing Grafana dashboard..."
-curl -sf -u admin:admin123 -X POST \
+curl -sf -u "${GRAFANA_USER}:${GRAFANA_PASSWORD}" -X POST \
   -H "Content-Type: application/json" \
   -d @/home/ubuntu/devops-project/grafana-dashboard-helpdesk.json \
   http://localhost:3000/api/dashboards/db > /dev/null \
