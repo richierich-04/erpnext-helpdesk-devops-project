@@ -1,0 +1,575 @@
+{
+  "dashboard": {
+    "uid": "adgjtc8",
+    "title": "ERPNext Helpdesk — Operations",
+    "description": "Live helpdesk KPIs, SLA tracking, and infrastructure health for ERPNext staging environment.",
+    "tags": ["erpnext", "helpdesk", "operations"],
+    "timezone": "browser",
+    "refresh": "1m",
+    "schemaVersion": 42,
+    "time": { "from": "now-30d", "to": "now" },
+    "timepicker": {
+      "refresh_intervals": ["30s","1m","5m","15m","30m","1h","6h","1d"]
+    },
+    "panels": [
+
+      { "id": 100, "type": "text", "title": "",
+        "gridPos": { "h": 2, "w": 24, "x": 0, "y": 0 },
+        "options": {
+          "mode": "markdown",
+          "content": "## 🎫 Ticket Overview\nLive ticket counts from ERPNext Helpdesk. Data refreshes every minute."
+        }
+      },
+
+      {
+        "id": 1, "type": "stat", "title": "Total Tickets",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 2 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "blue" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS total FROM `tabHD Ticket`;"
+        }]
+      },
+
+      {
+        "id": 2, "type": "stat", "title": "Open",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 2 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 100 },
+                { "color": "red", "value": 500 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS open FROM `tabHD Ticket` WHERE status = 'Open';"
+        }]
+      },
+
+      {
+        "id": 3, "type": "stat", "title": "Resolved",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 2 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "green" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS resolved FROM `tabHD Ticket` WHERE status = 'Resolved';"
+        }]
+      },
+
+      {
+        "id": 4, "type": "stat", "title": "Closed",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 2 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "dark-green" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "dark-green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS closed FROM `tabHD Ticket` WHERE status = 'Closed';"
+        }]
+      },
+
+      {
+        "id": 11, "type": "stat", "title": "Replied (Awaiting Customer)",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 6 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "orange" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "orange", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS replied FROM `tabHD Ticket` WHERE status = 'Replied';"
+        }]
+      },
+
+      {
+        "id": 12, "type": "stat", "title": "Urgent Priority",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 6 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "red", "value": 1 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS urgent FROM `tabHD Ticket` WHERE priority = 'Urgent' AND status NOT IN ('Closed','Resolved');"
+        }]
+      },
+
+      {
+        "id": 13, "type": "stat", "title": "Tickets Today",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 6 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "purple" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "purple", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) AS today FROM `tabHD Ticket` WHERE DATE(creation) = CURDATE();"
+        }]
+      },
+
+      {
+        "id": 14, "type": "stat", "title": "Resolution Rate",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 6 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "yellow", "value": 70 },
+                { "color": "green", "value": 85 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT ROUND(100.0 * SUM(CASE WHEN status IN ('Resolved','Closed') THEN 1 ELSE 0 END) / COUNT(*), 1) AS rate FROM `tabHD Ticket`;"
+        }]
+      },
+
+      { "id": 101, "type": "text", "title": "",
+        "gridPos": { "h": 2, "w": 24, "x": 0, "y": 10 },
+        "options": {
+          "mode": "markdown",
+          "content": "## 📊 Trends & Distribution"
+        }
+      },
+
+      {
+        "id": 7, "type": "timeseries", "title": "Tickets Created Per Day (Last 30 Days)",
+        "gridPos": { "h": 8, "w": 16, "x": 0, "y": 12 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "legend": { "calcs": ["sum","max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+          "tooltip": { "mode": "single", "sort": "none" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "fixed", "fixedColor": "blue" },
+            "custom": {
+              "drawStyle": "bars", "barAlignment": 0, "barWidthFactor": 0.6,
+              "fillOpacity": 80, "lineWidth": 1,
+              "gradientMode": "none", "pointSize": 5,
+              "showPoints": "never", "spanNulls": false,
+              "stacking": { "group": "A", "mode": "none" },
+              "thresholdsStyle": { "mode": "off" }
+            },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "time_series", "rawQuery": true,
+          "rawSql": "SELECT DATE_FORMAT(DATE(creation), '%Y-%m-%dT%H:%i:%sZ') AS time, COUNT(*) AS tickets_created FROM `tabHD Ticket` WHERE creation >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY DATE(creation) ORDER BY DATE(creation);"
+        }]
+      },
+
+      {
+        "id": 5, "type": "piechart", "title": "Status Breakdown",
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 12 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "pieType": "donut",
+          "displayLabels": ["name","percent"],
+          "legend": { "displayMode": "table", "placement": "bottom", "showLegend": true, "values": ["value","percent"] },
+          "tooltip": { "mode": "single", "sort": "none" }
+        },
+        "fieldConfig": {
+          "defaults": { "color": { "mode": "palette-classic" } }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COALESCE(status,'Unknown') AS status, COUNT(*) AS count FROM `tabHD Ticket` GROUP BY status ORDER BY count DESC;"
+        }]
+      },
+
+      {
+        "id": 6, "type": "barchart", "title": "Open Tickets by Priority",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "orientation": "horizontal",
+          "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+          "tooltip": { "mode": "single", "sort": "none" },
+          "xTickLabelRotation": 0
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "custom": { "fillOpacity": 80, "lineWidth": 1 }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COALESCE(priority,'Unknown') AS priority, COUNT(*) AS count FROM `tabHD Ticket` WHERE status NOT IN ('Closed','Resolved') GROUP BY priority ORDER BY FIELD(priority,'Urgent','High','Medium','Low','Unknown');"
+        }]
+      },
+
+      {
+        "id": 15, "type": "bargauge", "title": "Tickets by Type",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "orientation": "horizontal",
+          "displayMode": "gradient",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": true },
+          "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT COALESCE(ticket_type,'Unknown') AS ticket_type, COUNT(*) AS count FROM `tabHD Ticket` GROUP BY ticket_type ORDER BY count DESC;"
+        }]
+      },
+
+      { "id": 102, "type": "text", "title": "",
+        "gridPos": { "h": 2, "w": 24, "x": 0, "y": 28 },
+        "options": {
+          "mode": "markdown",
+          "content": "## 🔴 Live Activity"
+        }
+      },
+
+      {
+        "id": 8, "type": "table", "title": "Recent Tickets",
+        "gridPos": { "h": 10, "w": 24, "x": 0, "y": 30 },
+        "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+        "options": {
+          "cellHeight": "sm", "showHeader": true,
+          "footer": { "show": false, "reducer": ["sum"] }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "custom": { "align": "left", "cellOptions": { "type": "auto" }, "inspect": false }
+          },
+          "overrides": [
+            {
+              "matcher": { "id": "byName", "options": "status" },
+              "properties": [{
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text",
+                  "applyToRow": false
+                }
+              },{
+                "id": "mappings",
+                "value": [
+                  { "type": "value", "options": { "Open":     { "color": "orange", "index": 0 } } },
+                  { "type": "value", "options": { "Replied":  { "color": "yellow", "index": 1 } } },
+                  { "type": "value", "options": { "Resolved": { "color": "green",  "index": 2 } } },
+                  { "type": "value", "options": { "Closed":   { "color": "blue",   "index": 3 } } }
+                ]
+              }]
+            },
+            {
+              "matcher": { "id": "byName", "options": "priority" },
+              "properties": [{
+                "id": "mappings",
+                "value": [
+                  { "type": "value", "options": { "Urgent": { "color": "red",    "index": 0 } } },
+                  { "type": "value", "options": { "High":   { "color": "orange", "index": 1 } } },
+                  { "type": "value", "options": { "Medium": { "color": "yellow", "index": 2 } } },
+                  { "type": "value", "options": { "Low":    { "color": "green",  "index": 3 } } }
+                ]
+              }]
+            }
+          ]
+        },
+        "targets": [{
+          "datasource": { "type": "mysql", "uid": "ffkjpqscw5j40f" },
+          "editorMode": "code", "format": "table", "rawQuery": true,
+          "rawSql": "SELECT name AS `#`, subject AS `Subject`, COALESCE(status,'Unknown') AS `status`, COALESCE(priority,'Unknown') AS `priority`, COALESCE(ticket_type,'—') AS `type`, DATE_FORMAT(creation,'%Y-%m-%d %H:%i') AS `Created`, DATE_FORMAT(modified,'%Y-%m-%d %H:%i') AS `Last Updated` FROM `tabHD Ticket` ORDER BY creation DESC LIMIT 25;"
+        }]
+      },
+
+      { "id": 103, "type": "text", "title": "",
+        "gridPos": { "h": 2, "w": 24, "x": 0, "y": 40 },
+        "options": {
+          "mode": "markdown",
+          "content": "## 🖥️ Infrastructure Health"
+        }
+      },
+
+      {
+        "id": 9, "type": "stat", "title": "ERPNext Uptime",
+        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 42 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "value_and_name",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              { "type": "value", "options": { "1": { "text": "UP", "color": "green", "index": 0 } } },
+              { "type": "value", "options": { "0": { "text": "DOWN", "color": "red", "index": 1 } } }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [{ "color": "red", "value": 0 }, { "color": "green", "value": 1 }]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code", "exemplar": false, "instant": true,
+          "expr": "max by (job) (probe_success{job=\"erpnext-helpdesk-http\"})",
+          "legendFormat": "ERPNext"
+        }]
+      },
+
+      {
+        "id": 10, "type": "stat", "title": "HTTP Response Code",
+        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 42 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "red", "value": 0 },
+                { "color": "green", "value": 200 },
+                { "color": "yellow", "value": 400 },
+                { "color": "red", "value": 500 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code", "instant": true,
+          "expr": "max by (job) (probe_http_status_code{job=\"erpnext-helpdesk-http\"})",
+          "legendFormat": "HTTP Status"
+        }]
+      },
+
+      {
+        "id": 16, "type": "stat", "title": "Response Time",
+        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 42 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 1 },
+                { "color": "red", "value": 3 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code", "instant": true,
+          "expr": "max by (job) (probe_duration_seconds{job=\"erpnext-helpdesk-http\"})",
+          "legendFormat": "Response Time"
+        }]
+      },
+
+      {
+        "id": 17, "type": "stat", "title": "CPU Usage",
+        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 42 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "colorMode": "background", "graphMode": "none",
+          "justifyMode": "center", "textMode": "auto",
+          "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": 0 },
+                { "color": "yellow", "value": 70 },
+                { "color": "red", "value": 90 }
+              ]
+            },
+            "color": { "mode": "thresholds" }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code", "instant": true,
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU"
+        }]
+      },
+
+      {
+        "id": 18, "type": "timeseries", "title": "HTTP Response Time (Last 6h)",
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 46 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "legend": { "calcs": ["mean","max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+          "tooltip": { "mode": "single", "sort": "none" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": { "mode": "fixed", "fixedColor": "green" },
+            "custom": {
+              "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2,
+              "pointSize": 5, "showPoints": "never", "spanNulls": true,
+              "gradientMode": "opacity"
+            },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code",
+          "expr": "probe_duration_seconds{job=\"erpnext-helpdesk-http\"}",
+          "legendFormat": "Response Time"
+        }]
+      },
+
+      {
+        "id": 19, "type": "timeseries", "title": "Container Memory Usage (Last 6h)",
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 46 },
+        "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+        "options": {
+          "legend": { "calcs": ["mean","max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+          "tooltip": { "mode": "multi", "sort": "desc" }
+        },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes",
+            "custom": {
+              "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1,
+              "pointSize": 5, "showPoints": "never", "spanNulls": true,
+              "gradientMode": "none"
+            },
+            "color": { "mode": "palette-classic" },
+            "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": 0 }] }
+          }
+        },
+        "targets": [{
+          "datasource": { "type": "prometheus", "uid": "efkjouds5aolcc" },
+          "editorMode": "code",
+          "expr": "container_memory_usage_bytes{name=~\"frappe_docker.*\"}",
+          "legendFormat": "{{name}}"
+        }]
+      }
+
+    ],
+    "version": 11
+  },
+  "overwrite": true
+}
