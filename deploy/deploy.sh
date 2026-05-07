@@ -37,10 +37,10 @@ check() {
   local url=$2
   if curl -fsS "$url" >/dev/null 2>&1; then
     echo "  ✓ $name"
-    ((PASS++))
+    PASS=$((PASS + 1))
   else
     echo "  ✗ $name FAILED"
-    ((FAIL++))
+    FAIL=$((FAIL + 1))
   fi
 }
 
